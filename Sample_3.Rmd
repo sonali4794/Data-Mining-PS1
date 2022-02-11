@@ -1,0 +1,288 @@
+---
+title: "Sample_3"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("tidyverse")
+library("dplyr")
+library("magrittr")
+library("airportr")
+library("rnaturalearth")
+library("ggplot2")
+library("tibble")
+library("sf")
+library("maps")
+library("ggrepel")
+library("here")
+library("gganimate")
+
+abia = read.csv("C:/Users/hp/Downloads/ABIA.csv")
+abia$lane = paste(abia$Origin, "-", abia$Dest)
+abia = abia %>%
+  mutate(whether_delayed = ifelse(abia$ArrDelay != 0 | abia$DepDelay != 0 | abia$CarrierDelay != 0 | abia$WeatherDelay != 0 |abia$NASDelay != 0 | abia$SecurityDelay != 0 | abia$LateAircraftDelay != 0, 1, 0)) %>%
+  mutate(reasonofdelay = case_when(abia$CarrierDelay != 0 ~ "Carrier Delay",
+                                   abia$WeatherDelay != 0 ~ "Weather Delay",
+                                   abia$NASDelay != 0 ~ "NSADelay",
+                                   abia$SecurityDelay != 0 ~ "Security Delay",
+                                   abia$LateAircraftDelay != 0 ~ "Aircraft Delay",
+                                   abia$ArrDelay != 0 ~ "In Air Delay",
+                                   abia$DepDelay != 0 ~ "In Air Delay"))
+
+abia[is.na(abia)] = 0
+View(abia)
+  
+topvollanes = abia %>%
+  filter(Origin == "AUS") %>%
+  group_by(lane, Origin, Dest) %>%
+  summarize(vol = n()) %>%
+  arrange(desc(vol)) %>%
+  head(10)
+topvollanes
+
+topvollanes = topvollanes %>%
+  mutate(lato = airport_location(Origin)$Latitude, longo = airport_location(Origin)$Longitude, 
+         latd = airport_location(Dest)$Latitude, longd = airport_location(Dest)$Longitude)
+topvollanes
+
+usa = here(
+  "cb_2018_us_state_20m", "cb_2018_us_state_20m.shp"
+) %>%
+  st_read()
+
+ggplot(data = usa)+
+  geom_sf(fill = "lightblue", color = "black") +
+  geom_curve(data = topvollanes, aes(x = longo, y = lato, xend = longd, yend = latd)) +
+  geom_point(data = topvollanes, aes(x = longd, y = latd), size = 3) +
+  geom_point(data = topvollanes, aes(x = longo, y = lato), size = 5, color = 'red') +
+  geom_label_repel(data = topvollanes, nudge_x = 0, nudge_y = -0,
+                   aes(x = longd, y = latd, label = topvollanes$Dest)) +
+  coord_sf(xlim = c(-125, -65),ylim = c(20, 50))+
+  labs(title = 'Top 10 high traffic lanes in and out of Austin')
+
+library("tidyverse")
+library("dplyr")
+library("magrittr")
+library("tidyverse")
+library("dplyr")
+library("magrittr")
+
+billboard = read.csv("C:/Users/hp/Downloads/billboard.csv")
+view(billboard)
+
+top10 = billboard %>%
+  group_by(song, performer) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  head(10) %>%
+  select(song, performer, count)
+top10
+
+div = billboard %>%
+  filter(year != "1958" & year != "2021") %>%
+  group_by(year, song) %>%
+  summarise(count = n())
+div
+diverse = div %>%
+  group_by(year) %>%
+  summarise(no_of_unique_songs = n())
+diverse
+
+ggplot(diverse) +
+  geom_line(aes(x = year, y = no_of_unique_songs)) +
+  labs(x = "Year", y = "No of Songs", title = "Musical Diversity", caption = "The graph displays how the number of unique songs has change from 1959 to 2020. It appears that around 1970 there were many songs that made to the billboard top 100. Whereas the billboard saw least number of songs around 2001-2002. This can be a good data point to study the creativity of music composers as well the taste of audience")
+
+twhit = billboard %>%
+  group_by(performer, song) %>%
+  summarise(n1 = n()) %>%
+  filter(n1 >= 10)
+twhit
+
+tenweekhit = twhit %>%
+  group_by(performer) %>%
+  summarise(n2 = n()) %>%
+  arrange(desc(n2)) %>%
+  head(19)
+
+ggplot(tenweekhit) +
+  geom_col(aes(x = fct_reorder(performer, n2), y = n2), color = "red", fill = "red") +
+  coord_flip() +
+  labs(x = "Artists", y = "No of 10-week hit Songs",
+       caption = "The graph shows list of top 19 artists who have had at least one song apper in the top 100 billboard. Elton outranks all with a high margin")
+
+library("tidyverse")
+library("dplyr")
+library("magrittr")
+
+olympics_top20 = read.csv("C:/Users/hp/Downloads/olympics_top20.csv")
+view(olympics_top20)
+
+df1 = olympics_top20 %>%
+  filter(sport == "Athletics" & sex == "F") %>%
+  group_by(name) %>%
+  summarise(ht = mean(height))
+df1
+
+q95 = quantile(df1$ht, 0.95)
+q95
+
+print("The 95th percentile height of female athletes is 183")
+
+df2 = olympics_top20 %>%
+  filter(sex == "F") %>%
+  group_by(event) %>%
+  summarise(variation = sd(height)) %>%
+  arrange(desc(variation))
+df2
+
+maxsd = max(df2$variation, na.rm = TRUE)
+maxsd
+
+print("Highest variation (measured in terms of std dev) is in Rowing Women's Coxed Fours event followed by Women's basketball")
+
+df3 = olympics_top20 %>%
+  filter(sport == "Swimming") %>%
+  select(name, age, sex, year)
+df3
+
+df3 = df3 %>%
+  mutate(agef = ifelse(df3$sex == "F", df3$age, 0)) %>%
+  mutate(agem = ifelse(df3$sex == "M", df3$age, 0))
+df3
+
+agevariation = df3 %>%
+  group_by(year) %>%
+  summarise(avgall = mean(age, na.rm = TRUE), avgf = mean(agef, na.rm = TRUE), avgm = mean(agem, na.rm = TRUE))
+agevariation
+
+view(agevariation)
+  
+ggplot(agevariation)+
+  geom_line(aes(x = year, y = avgall))+
+  geom_line(aes(x = year, y = avgm, color = 'green'))+
+  geom_line(aes(x = year, y = avgf, color = 'red'))+
+  labs(x = "Years when Swimming event was held at Olympics", y = "Average Age of Swimmers", caption = "")
+
+df_male = olympics_top20 %>%
+  filter(sport == "Swimming") %>%
+  filter(sex == "M") %>%
+  group_by(year) %>%
+  summarise(agem = mean(age))%>%
+  select(year, agem)
+df_male
+
+df_female = olympics_top20 %>%
+  filter(sport == "Swimming") %>%
+  filter(sex == "F") %>%
+  group_by(year) %>%
+  summarise(agef = mean(age))%>%
+  select(year, agef)
+df_female
+
+df_all = olympics_top20 %>%
+  filter(sport == "Swimming") %>%
+  group_by(year) %>%
+  summarise(ageall = mean(age)) %>%
+  select(year, ageall)
+df_all
+
+dfm1 = merge(df_all, df_female, by.x = "year", by.y = "year", all = TRUE)
+dfm1
+df = merge(dfm1, df_male, by.x = "year", by.y = "year", all = TRUE)
+df
+df[is.na(df)] = 0
+df
+
+ggplot(df)+
+  geom_line(aes(x = year, y = ageall, color = "all"))+
+  geom_line(aes(x = year, y = agem, color = 'male'))+
+  geom_line(aes(x = year, y = agef, color = 'female'))+
+  labs(x = "Years when Swimming event was held at Olympics", y = "Average Age of Swimmers", caption = "", color = "sex") +
+  ylim(0, 40)
+
+
+library(tidyverse)
+library(ggplot2)
+library(rsample) 
+library(caret)
+library(modelr)
+library(parallel)
+library(foreach)
+
+sclass = read_csv('sclass.csv')
+view(sclass)
+
+data1 = sclass %>% 
+  filter(trim == '350')
+
+data1_split =  initial_split(data1, prop=0.9)
+data1_train = training(data1_split)
+data1_test  = testing(data1_split)
+
+k1_rmse = foreach(k = 2:200, .combine='rbind') %do% {
+  knn = knnreg(price ~ mileage, data=data1_train, k=k)
+  rms = rmse(knn, data1_test)
+  c(k=k, e=rms)
+} %>% as.data.frame
+
+ggplot(k1_rmse) + 
+  geom_point(aes(x=k, y=e)) + 
+  labs(x = 'Varying values of K',y = 'RMSE', title = 'K vs RMSE for 350 Model ') +
+  scale_x_log10() 
+
+optimal_k1 = k1_rmse%>%
+  filter(e == min(e))
+optimal_k1
+
+knn_1 = knnreg(price ~ mileage, data = data1_train, k = optimal_k1)
+data1_test = data1_test %>%
+  mutate(price_pred = predict(knn, data1_test))
+
+ggplot(data = data1_test) +
+  geom_point(aes(x = mileage, y = price)) +
+  geom_line(aes(x = mileage, y = price_pred), color = 'red')+
+  labs(title = "Fitted model for 350 Model")
+
+data2 = sclass %>% 
+  filter(trim == '63 AMG')
+
+data2_split =  initial_split(data2, prop=0.9)
+data2_train = training(data2_split)
+data2_test  = testing(data2_split)
+
+k2_rmse = foreach(k = 2:200, .combine='rbind') %do% {
+  knn = knnreg(price ~ mileage, data=data2_train, k=k)
+  rms = rmse(knn, data2_test)
+  c(k=k, e=rms)
+} %>% as.data.frame
+
+ggplot(k2_rmse) + 
+  geom_point(aes(x=k, y=e)) + 
+  labs(x = 'Varying values of K',y = 'RMSE', title = 'K vs RMSE for 63 AMG Model ') +
+  scale_x_log10() 
+
+optimal_k2 = k2_rmse%>%
+  filter(e == min(e))
+optimal_k2
+
+knn_2 = knnreg(price ~ mileage, data = data2_train, k = optimal_k2)
+data2_test = data2_test %>%
+  mutate(price_pred = predict(knn, data2_test))
+
+ggplot(data = data2_test) +
+  geom_point(aes(x = mileage, y = price)) +
+  geom_line(aes(x = mileage, y = price_pred), color = 'red')+
+  labs(title = "Fitted model for 63 AMG Model")
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
