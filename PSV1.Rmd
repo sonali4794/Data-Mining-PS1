@@ -31,7 +31,6 @@ abia = abia %>%
                                    abia$DepDelay != 0 ~ "In Air Delay"))
 
 abia[is.na(abia)] = 0
-View(abia)
   
 topvollanes = abia %>%
   filter(Origin == "AUS") %>%
@@ -39,19 +38,17 @@ topvollanes = abia %>%
   summarize(vol = n()) %>%
   arrange(desc(vol)) %>%
   head(10)
-topvollanes
 
 topvollanes = topvollanes %>%
   mutate(lato = airport_location(Origin)$Latitude, longo = airport_location(Origin)$Longitude, 
          latd = airport_location(Dest)$Latitude, longd = airport_location(Dest)$Longitude)
-topvollanes
 
 usa = here(
   "cb_2018_us_state_20m", "cb_2018_us_state_20m.shp"
 ) %>%
   st_read()
 
-ggplot(data = usa)+
+map = ggplot(data = usa)+
   geom_sf(fill = "lightblue", color = "black") +
   geom_curve(data = topvollanes, aes(x = longo, y = lato, xend = longd, yend = latd)) +
   geom_point(data = topvollanes, aes(x = longd, y = latd), size = 3) +
@@ -60,13 +57,14 @@ ggplot(data = usa)+
                    aes(x = longd, y = latd, label = topvollanes$Dest)) +
   coord_sf(xlim = c(-125, -65),ylim = c(20, 50))+
   labs(title = 'Top 10 high traffic lanes in and out of Austin')
+map
 
 ```
 
 ## R Markdown
 Q2] Billboard Top 100
 
-```{r, echo = FALSE}
+```{r}
 
 library("tidyverse")
 library("dplyr")
@@ -76,7 +74,6 @@ library("dplyr")
 library("magrittr")
 
 billboard = read.csv("C:/Users/hp/Downloads/billboard.csv")
-view(billboard)
 
 top10 = billboard %>%
   group_by(song, performer) %>%
@@ -90,11 +87,10 @@ div = billboard %>%
   filter(year != "1958" & year != "2021") %>%
   group_by(year, song) %>%
   summarise(count = n())
-div
+
 diverse = div %>%
   group_by(year) %>%
   summarise(no_of_unique_songs = n())
-diverse
 
 ggplot(diverse) +
   geom_line(aes(x = year, y = no_of_unique_songs)) +
@@ -104,7 +100,6 @@ twhit = billboard %>%
   group_by(performer, song) %>%
   summarise(n1 = n()) %>%
   filter(n1 >= 10)
-twhit
 
 tenweekhit = twhit %>%
   group_by(performer) %>%
@@ -121,7 +116,7 @@ ggplot(tenweekhit) +
 
 Q3] Olympics Wrangling
 
-```{r, echo=FALSE}
+```{r}
 
 library("tidyverse")
 library("dplyr")
@@ -134,7 +129,6 @@ df1 = olympics_top20 %>%
   filter(sport == "Athletics" & sex == "F") %>%
   group_by(name) %>%
   summarise(ht = mean(height))
-df1
 
 q95 = quantile(df1$ht, 0.95)
 q95
@@ -146,7 +140,6 @@ df2 = olympics_top20 %>%
   group_by(event) %>%
   summarise(variation = sd(height)) %>%
   arrange(desc(variation))
-df2
 
 maxsd = max(df2$variation, na.rm = TRUE)
 maxsd
@@ -159,7 +152,6 @@ df_male = olympics_top20 %>%
   group_by(year) %>%
   summarise(agem = mean(age))%>%
   select(year, agem)
-df_male
 
 df_female = olympics_top20 %>%
   filter(sport == "Swimming") %>%
@@ -167,21 +159,16 @@ df_female = olympics_top20 %>%
   group_by(year) %>%
   summarise(agef = mean(age))%>%
   select(year, agef)
-df_female
 
 df_all = olympics_top20 %>%
   filter(sport == "Swimming") %>%
   group_by(year) %>%
   summarise(ageall = mean(age)) %>%
   select(year, ageall)
-df_all
 
 dfm1 = merge(df_all, df_female, by.x = "year", by.y = "year", all = TRUE)
-dfm1
 df = merge(dfm1, df_male, by.x = "year", by.y = "year", all = TRUE)
-df
 df[is.na(df)] = 0
-df
 
 ggplot(df)+
   geom_line(aes(x = year, y = ageall, color = "all"))+
@@ -195,7 +182,7 @@ ggplot(df)+
 Q4]K-nearest Neighhbours
 
 
-```{r, echo = FALSE}
+```{r}
 library(tidyverse)
 library(ggplot2)
 library(rsample) 
@@ -205,7 +192,6 @@ library(parallel)
 library(foreach)
 
 sclass = read_csv('sclass.csv')
-view(sclass)
 
 data1 = sclass %>% 
   filter(trim == '350')
@@ -264,9 +250,9 @@ knn_2 = knnreg(price ~ mileage, data = data2_train, k = optimal_k2)
 data2_test = data2_test %>%
   mutate(price_pred = predict(knn, data2_test))
 
+
 ggplot(data = data2_test) +
   geom_point(aes(x = mileage, y = price)) +
   geom_line(aes(x = mileage, y = price_pred), color = 'red')+
   labs(title = "Fitted model for 63 AMG Model")
-
 ```
