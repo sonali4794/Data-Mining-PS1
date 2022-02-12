@@ -17,7 +17,9 @@ library("maps")
 library("ggrepel")
 library("here")
 library("gganimate")
+```
 
+```{r, echo=FALSE}
 abia = read.csv("C:/Users/hp/Downloads/ABIA.csv")
 abia$lane = paste(abia$Origin, "-", abia$Dest)
 abia = abia %>%
@@ -57,15 +59,13 @@ map = ggplot(data = usa)+
                    aes(x = longd, y = latd, label = topvollanes$Dest)) +
   coord_sf(xlim = c(-125, -65),ylim = c(20, 50))+
   labs(title = 'Top 10 high traffic lanes in and out of Austin')
-map
 
 ```
 
 ## R Markdown
 Q2] Billboard Top 100
 
-```{r}
-
+```{r, echo=FALSE}
 library("tidyverse")
 library("dplyr")
 library("magrittr")
@@ -116,15 +116,12 @@ ggplot(tenweekhit) +
 
 Q3] Olympics Wrangling
 
-```{r}
-
+```{r, echo=FALSE}
 library("tidyverse")
 library("dplyr")
 library("magrittr")
 
 olympics_top20 = read.csv("C:/Users/hp/Downloads/olympics_top20.csv")
-view(olympics_top20)
-
 df1 = olympics_top20 %>%
   filter(sport == "Athletics" & sex == "F") %>%
   group_by(name) %>%
@@ -182,7 +179,7 @@ ggplot(df)+
 Q4]K-nearest Neighhbours
 
 
-```{r}
+```{r, echo=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(rsample) 
