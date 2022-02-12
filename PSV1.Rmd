@@ -71,6 +71,8 @@ ggplot(data = usa)+
 
 ```
 
+Top volume lanes can give some very critical information especially in businesses of e-commerce, logistics, airlines and related industries. In case of contingencies and disasters it would be important to first take care of these lanes. LA seems to be a popular destination for folks in Austin :)
+
 ##Q2] Billboard Top 100
 
 ```{r, echo=FALSE}

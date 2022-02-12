@@ -13,6 +13,12 @@
 
 ![](PSV1_files/figure-markdown_strict/unnamed-chunk-1-1.png)
 
+Top volume lanes can give some very critical information especially in
+businesses of e-commerce, logistics, airlines and related industries. In
+case of contingencies and disasters it would be important to first take
+care of these lanes. LA seems to be a popular destination for folks in
+Austin :)
+
 ##Q2\] Billboard Top 100
 
     ## `summarise()` has grouped output by 'song'. You can override using the `.groups` argument.
@@ -69,12 +75,12 @@
 
 ![](PSV1_files/figure-markdown_strict/unnamed-chunk-4-1.png)
 
-    ##            k        e
-    ## result.13 14 9616.358
+    ##            k       e
+    ## result.13 14 9113.06
 
 ![](PSV1_files/figure-markdown_strict/unnamed-chunk-4-2.png)![](PSV1_files/figure-markdown_strict/unnamed-chunk-4-3.png)
 
     ##            k        e
-    ## result.16 17 15346.42
+    ## result.93 94 12738.44
 
 ![](PSV1_files/figure-markdown_strict/unnamed-chunk-4-4.png)
