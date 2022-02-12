@@ -1,13 +1,11 @@
 ---
-title: "Untitled"
+title: "Data_Mining_PS1"
+author: "Sonali"
 output: md_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(warning = FALSE, message = FALSE)
-library("tidyverse")
-library("dplyr")
-library("magrittr")
+knitr::opts_chunk$set(echo = TRUE)
 library("airportr")
 library("rnaturalearth")
 library("ggplot2")
@@ -17,7 +15,18 @@ library("maps")
 library("ggrepel")
 library("here")
 library("gganimate")
+library("tidyverse")
+library("dplyr")
+library("magrittr")
+library(ggplot2)
+library(rsample) 
+library(caret)
+library(modelr)
+library(parallel)
+library(foreach)
 ```
+
+##Q1] Looking at top 10 traffic Lanes flying out of Austin
 
 ```{r, echo=FALSE}
 abia = read.csv("C:/Users/hp/Downloads/ABIA.csv")
@@ -62,17 +71,9 @@ map = ggplot(data = usa)+
 
 ```
 
-## R Markdown
-Q2] Billboard Top 100
+##Q2] Billboard Top 100
 
 ```{r, echo=FALSE}
-library("tidyverse")
-library("dplyr")
-library("magrittr")
-library("tidyverse")
-library("dplyr")
-library("magrittr")
-
 billboard = read.csv("C:/Users/hp/Downloads/billboard.csv")
 
 top10 = billboard %>%
@@ -114,13 +115,9 @@ ggplot(tenweekhit) +
        caption = "The graph shows list of top 19 artists who have had at least one song apper in the top 100 billboard. Elton outranks all with a high margin")
 ```
 
-Q3] Olympics Wrangling
+##Q3] Olympics Wrangling
 
 ```{r, echo=FALSE}
-library("tidyverse")
-library("dplyr")
-library("magrittr")
-
 olympics_top20 = read.csv("C:/Users/hp/Downloads/olympics_top20.csv")
 df1 = olympics_top20 %>%
   filter(sport == "Athletics" & sex == "F") %>%
@@ -176,18 +173,10 @@ ggplot(df)+
 
 ```
 
-Q4]K-nearest Neighhbours
+##Q4]K-nearest Neighhbours
 
 
 ```{r, echo=FALSE}
-library(tidyverse)
-library(ggplot2)
-library(rsample) 
-library(caret)
-library(modelr)
-library(parallel)
-library(foreach)
-
 sclass = read_csv('sclass.csv')
 
 data1 = sclass %>% 
