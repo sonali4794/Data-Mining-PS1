@@ -59,7 +59,7 @@ usa = here(
 ) %>%
   st_read()
 
-map = ggplot(data = usa)+
+ggplot(data = usa)+
   geom_sf(fill = "lightblue", color = "black") +
   geom_curve(data = topvollanes, aes(x = longo, y = lato, xend = longd, yend = latd)) +
   geom_point(data = topvollanes, aes(x = longd, y = latd), size = 3) +

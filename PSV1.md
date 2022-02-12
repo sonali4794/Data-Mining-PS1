@@ -11,6 +11,8 @@
     ## Bounding box:  xmin: -179.1743 ymin: 17.91377 xmax: 179.7739 ymax: 71.35256
     ## Geodetic CRS:  NAD83
 
+![](PSV1_files/figure-markdown_strict/unnamed-chunk-1-1.png)
+
 ##Q2\] Billboard Top 100
 
     ## `summarise()` has grouped output by 'song'. You can override using the `.groups` argument.
@@ -68,11 +70,11 @@
 ![](PSV1_files/figure-markdown_strict/unnamed-chunk-4-1.png)
 
     ##            k        e
-    ## result.26 27 8085.804
+    ## result.13 14 9616.358
 
 ![](PSV1_files/figure-markdown_strict/unnamed-chunk-4-2.png)![](PSV1_files/figure-markdown_strict/unnamed-chunk-4-3.png)
 
-    ##              k        e
-    ## result.101 102 14020.15
+    ##            k        e
+    ## result.16 17 15346.42
 
 ![](PSV1_files/figure-markdown_strict/unnamed-chunk-4-4.png)
